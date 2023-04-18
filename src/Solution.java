@@ -1,25 +1,26 @@
+import java.util.Stack;
+
 public class Solution {
     public boolean isValid(String s) {
-        int l = s.length();
         String lefts = "{[(";
-        String rights = "}])";
-        boolean res = true;
+        // String rights = "}])";
+        Stack<Character> stack = new Stack<>();
 
-        if (l % 2 != 0 ||
-                rights.contains(String.valueOf(s.charAt(0))) ||
-                lefts.contains(String.valueOf(s.charAt(l - 1))))
-            return false;
 
-        for (int i = 0; i < l; i+=2) {
-            String pattern = String.valueOf(s.charAt(i)) + s.charAt(i + 1);
-            res = switch (pattern){
-                case"{}" -> true;
-                case"()" -> true;
-                case"[]" -> true;
-                default -> false;
-            };
-            if (!res) break;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (lefts.contains(String.valueOf(c))) stack.push(c);
+            else {
+                if (stack.isEmpty()) return false;
+                char poped = stack.pop();
+                poped = switch (poped){
+                    case'[' -> ']';
+                    case'{' -> '}';
+                    default -> ')';
+                };
+                if (poped != c) return false;
+            }
         }
-        return res;
+        return stack.isEmpty();
     }
 }
